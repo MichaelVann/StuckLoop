@@ -46,23 +46,23 @@ WheelCollider:
   m_Radius: 0.63
   m_SuspensionSpring:
     spring: 35000
-    damper: 1000
+    damper: 4500
     targetPosition: 0.5
   m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
-  m_Mass: 20
-  m_WheelDampingRate: 0.0001
+  m_Mass: 200
+  m_WheelDampingRate: 1
   m_ForwardFriction:
     m_ExtremumSlip: 0.4
-    m_ExtremumValue: 1
+    m_ExtremumValue: 5
     m_AsymptoteSlip: 0.8
     m_AsymptoteValue: 0.5
     m_Stiffness: 1
   m_SidewaysFriction:
     m_ExtremumSlip: 0.2
-    m_ExtremumValue: 1
+    m_ExtremumValue: 5
     m_AsymptoteSlip: 0.5
-    m_AsymptoteValue: 0.5
+    m_AsymptoteValue: 0.75
     m_Stiffness: 1
   m_IncludeLayers:
     serializedVersion: 2
@@ -132,7 +132,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: df0ceef4fee20de4da8872ff2d75297e, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.7071068
+      value: -0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: df0ceef4fee20de4da8872ff2d75297e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -144,7 +144,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: df0ceef4fee20de4da8872ff2d75297e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 90
+      value: -90
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: df0ceef4fee20de4da8872ff2d75297e, type: 3}
       propertyPath: m_Name

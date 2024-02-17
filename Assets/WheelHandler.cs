@@ -6,6 +6,7 @@ public class WheelHandler : MonoBehaviour
 {
     WheelCollider m_wheelColliderRef;
     [SerializeField] GameObject m_meshRef;
+    float wheelRotation = 0f;
     // Start is called before the first frame update
     void Start()
     {
@@ -17,17 +18,17 @@ public class WheelHandler : MonoBehaviour
     {
         //float suspensionOffset = -(1f-m_wheelColliderRef.suspensionSpring.targetPosition) * m_wheelColliderRef.suspensionDistance;
 
-        var collider = gameObject.GetComponent<WheelCollider>();
-        var distance = collider.suspensionDistance;
+        var distance = m_wheelColliderRef.suspensionDistance;
         WheelHit hit;
-        if (collider.GetGroundHit(out hit))
+        if (m_wheelColliderRef.GetGroundHit(out hit))
         {
-            var point = hit.point + (transform.up * collider.radius);
-            distance = transform.position.y - point.y; //Vector3.Distance(transform.position, point);
+            float offset = hit.point.y + m_wheelColliderRef.radius;
+            distance = transform.position.y - offset; //Vector3.Distance(transform.position, point);
         }
-        var springCompression = 1 - (distance / collider.suspensionDistance);
-        Debug.Log(springCompression);
         m_meshRef.transform.localPosition = new Vector3(0f, -distance, 0f);
-        m_meshRef.transform.localEulerAngles = new Vector3(0f, m_wheelColliderRef.steerAngle, 90f);
+        float deltaRot = m_wheelColliderRef.rotationSpeed * Time.fixedDeltaTime;
+        wheelRotation += deltaRot;
+        m_meshRef.transform.localEulerAngles = new Vector3(wheelRotation, m_wheelColliderRef.steerAngle, 90f);
+        //m_meshRef.transform.Rotate(new Vector3(m_wheelColliderRef.rotationSpeed * Time.deltaTime, 0f, 0f));
     }
 }
