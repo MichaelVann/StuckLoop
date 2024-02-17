@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class VehicleHandler : MonoBehaviour
@@ -16,10 +17,11 @@ public class VehicleHandler : MonoBehaviour
     float m_steeringAngle = 0f;
     const float m_steeringSpeed = 20f;
     const float m_maxSteeringAngle = 45f;
-
+    Rigidbody m_rigidBodyRef;
 
     [SerializeField] float m_torque = 500f;
     [SerializeField] float m_brakingForce = 300f;
+    [SerializeField] TextMeshProUGUI m_speedReadoutText;
 
     // Start is called before the first frame update
     void Start()
@@ -27,12 +29,13 @@ public class VehicleHandler : MonoBehaviour
         m_wheels = new WheelCollider[]{ m_frontLeftWheel, m_frontRightWheel, m_backLeftWheel, m_backRightWheel};
         m_frontWheels = new WheelCollider[]{ m_frontLeftWheel, m_frontRightWheel};
         m_backWheels = new WheelCollider[]{ m_backLeftWheel, m_backRightWheel };
+        m_rigidBodyRef = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        m_speedReadoutText.text = m_rigidBodyRef.velocity.magnitude.ToString("f2") + " km/h";
     }
 
     void FixedUpdate()
@@ -47,7 +50,7 @@ public class VehicleHandler : MonoBehaviour
 
         for (int i = 0; i < m_frontWheels.Length; i++)
         {
-            m_backWheels[i].steerAngle = m_steeringAngle;
+            m_frontWheels[i].steerAngle = m_steeringAngle;
         }
     }
 }
