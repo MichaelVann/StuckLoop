@@ -5,32 +5,24 @@ using UnityEngine;
 
 public class VehicleHandler : MonoBehaviour
 {
+    [SerializeField] HoverPad m_hoverPadFrontLeft;
+    [SerializeField] HoverPad m_hoverPadFrontRight;
+    [SerializeField] HoverPad m_hoverPadBackLeft;
+    [SerializeField] HoverPad m_hoverPadBackRight;
 
-    [SerializeField] WheelCollider m_frontLeftWheel;
-    [SerializeField] WheelCollider m_frontRightWheel;
-    [SerializeField] WheelCollider m_backLeftWheel;
-    [SerializeField] WheelCollider m_backRightWheel;
     [SerializeField] GameObject m_centreOfMassRef;
-    WheelCollider[] m_wheels;
-    WheelCollider[] m_frontWheels;
-    WheelCollider[] m_backWheels;
 
-    float m_steeringAngle = 0f;
-    const float m_steeringSpeed = 45f;
-    const float m_maxSteeringAngle = 45f;
+    const float m_steeringTorque = 25f;
     Rigidbody m_rigidBodyRef;
 
     [SerializeField] float m_torque = 500f;
     [SerializeField] float m_brakingForce = 300f;
-    float m_rollTorqueStrength = 50f;
+    float m_rollTorqueStrength = 5f;
     [SerializeField] TextMeshProUGUI m_speedReadoutText;
 
     // Start is called before the first frame update
     void Start()
     {
-        m_wheels = new WheelCollider[]{ m_frontLeftWheel, m_frontRightWheel, m_backLeftWheel, m_backRightWheel};
-        m_frontWheels = new WheelCollider[]{ m_frontLeftWheel, m_frontRightWheel};
-        m_backWheels = new WheelCollider[]{ m_backLeftWheel, m_backRightWheel };
         m_rigidBodyRef = GetComponent<Rigidbody>();
     }
 
@@ -39,6 +31,10 @@ public class VehicleHandler : MonoBehaviour
     {
         m_speedReadoutText.text = (m_rigidBodyRef.velocity.magnitude * 3.6f).ToString("f2") + " km/h";
         m_rigidBodyRef.centerOfMass = m_centreOfMassRef.transform.localPosition;
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            m_rigidBodyRef.AddRelativeForce(Vector3.up * 1000f * m_rigidBodyRef.mass);
+        }
     }
 
     void ApplyCounterFlipTorque()
@@ -50,46 +46,44 @@ public class VehicleHandler : MonoBehaviour
 
     void HandleSteering()
     {
-        float steeringDeflectionStrength = m_steeringSpeed * Time.deltaTime / Mathf.Clamp(m_rigidBodyRef.velocity.magnitude / 40f, 1f, 10000f);
-        float steeringDeflection = 0f;
-
+        float steeringDirection = 0f;
         if (Input.GetKey(KeyCode.A))
         {
-            steeringDeflection = -steeringDeflectionStrength;
+            steeringDirection = -1f;
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            steeringDeflection = steeringDeflectionStrength;
+            steeringDirection = 1f;
         }
 
-        if (steeringDeflection == 0)
-        {
-            m_steeringAngle = m_steeringAngle * (Mathf.Pow(1f - Time.deltaTime, 4f));
-        }
-        else
-        {
-            m_steeringAngle += steeringDeflection;
-        }
+        float yawTorque = steeringDirection * m_steeringTorque * m_rigidBodyRef.mass;
+        float rollTorque = -yawTorque / 5f;
 
-        m_steeringAngle = Mathf.Clamp(m_steeringAngle, -m_maxSteeringAngle, m_maxSteeringAngle);
-        for (int i = 0; i < m_frontWheels.Length; i++)
-        {
-            m_frontWheels[i].steerAngle = m_steeringAngle;
-        }
+        m_rigidBodyRef.AddRelativeTorque(new Vector3(0f, yawTorque, 0f));
+        m_rigidBodyRef.AddRelativeTorque(new Vector3(0f, 0f, rollTorque));
+
+        //m_hoverPadFrontLeft.SetThrottle(1f + steeringDirection * 0.3f);
+        //m_hoverPadBackLeft.SetThrottle(1f + steeringDirection * 0.3f);
+        //m_hoverPadFrontRight.SetThrottle(1f - steeringDirection * 0.3f);
+        //m_hoverPadBackRight.SetThrottle(1f - steeringDirection * 0.3f);
     }
 
     void FixedUpdate()
     {
-        for (int i = 0; i < m_backWheels.Length; i++)
-        {
-            m_backWheels[i].motorTorque = Input.GetKey(KeyCode.W) ? m_torque : (Input.GetKey(KeyCode.S) ? -m_torque: 0f);
-        }
-
         float rollInput = Input.GetKey(KeyCode.Q) ? 1f : (Input.GetKey(KeyCode.E) ? -1f : 0f);
 
         if (rollInput != 0f)
         {
             m_rigidBodyRef.AddRelativeTorque(0f, 0f, m_rollTorqueStrength * m_rigidBodyRef.mass * rollInput);
+        }
+
+        if (Input.GetKey(KeyCode.W))
+        {
+            m_rigidBodyRef.AddRelativeForce(Vector3.forward * 1000f * m_rigidBodyRef.mass * Time.fixedDeltaTime);
+        }
+        else if (Input.GetKey(KeyCode.S))
+        {
+            m_rigidBodyRef.AddRelativeForce(-Vector3.forward * 1000f * m_rigidBodyRef.mass * Time.fixedDeltaTime);
         }
 
         HandleSteering();
