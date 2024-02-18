@@ -29,6 +29,10 @@ public class HoverPad : MonoBehaviour
             Vector3 force = transform.up * m_throttle * 70f * distanceStrength * m_parentRigidbody.mass * Time.fixedDeltaTime;
             //Debug.Log(m_maxDistanceStrength);
             m_parentRigidbody.AddForceAtPosition(force, transform.position);
+
+            float desiredVerticalSpeed = Mathf.Sqrt(2f * Physics.gravity.y * distance);
+
         }
+
     }
 }

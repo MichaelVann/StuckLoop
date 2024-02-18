@@ -10,10 +10,11 @@ public class VehicleHandler : MonoBehaviour
     [SerializeField] HoverPad m_hoverPadBackLeft;
     [SerializeField] HoverPad m_hoverPadBackRight;
     HoverPad[] m_hoverPads;
+    const float m_stabilisingVerticalForceStrength = 50f;
 
     [SerializeField] GameObject m_centreOfMassRef;
 
-    const float m_steeringTorque = 25f;
+    const float m_steeringTorque = 55f;
     Rigidbody m_rigidBodyRef;
 
     [SerializeField] float m_torque = 500f;
@@ -69,7 +70,7 @@ public class VehicleHandler : MonoBehaviour
         float yawTorque = steeringDirection * m_steeringTorque * m_rigidBodyRef.mass;
         float rollTorque = -yawTorque / 5f;
 
-        m_rigidBodyRef.AddRelativeTorque(new Vector3(0f, yawTorque, 0f));
+        m_rigidBodyRef.AddTorque(new Vector3(0f, yawTorque, 0f));
         //m_rigidBodyRef.AddRelativeTorque(new Vector3(0f, 0f, rollTorque));
 
         //m_hoverPadFrontLeft.SetThrottle(1f + steeringDirection * 0.3f);
@@ -95,8 +96,14 @@ public class VehicleHandler : MonoBehaviour
         {
             m_rigidBodyRef.AddRelativeForce(-Vector3.forward * 1000f * m_rigidBodyRef.mass * Time.fixedDeltaTime);
         }
+        Vector3 stabilisingForceY = new Vector3(0f, -m_rigidBodyRef.velocity.y * m_stabilisingVerticalForceStrength * m_rigidBodyRef.mass * Time.fixedDeltaTime, 0f);
+        m_rigidBodyRef.AddRelativeForce(stabilisingForceY);
 
         HandleSteering();
+
+        Vector3 deltaHeading = transform.forward - m_rigidBodyRef.velocity.normalized;
+        m_rigidBodyRef.AddForce(deltaHeading * Time.deltaTime * m_rigidBodyRef.velocity.magnitude * 100f* m_rigidBodyRef.mass);
+
 
         //ApplyCounterFlipTorque();
     }
