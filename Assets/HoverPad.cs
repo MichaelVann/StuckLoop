@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class HoverPad : MonoBehaviour
 {
-    [SerializeField] Collider m_colliderRef;
     [SerializeField] Rigidbody m_parentRigidbody;
     float m_maxDistanceStrength = 0f;
     float m_throttle = 1f;

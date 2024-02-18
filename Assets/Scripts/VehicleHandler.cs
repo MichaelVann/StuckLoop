@@ -9,6 +9,7 @@ public class VehicleHandler : MonoBehaviour
     [SerializeField] HoverPad m_hoverPadFrontRight;
     [SerializeField] HoverPad m_hoverPadBackLeft;
     [SerializeField] HoverPad m_hoverPadBackRight;
+    HoverPad[] m_hoverPads;
 
     [SerializeField] GameObject m_centreOfMassRef;
 
@@ -24,13 +25,22 @@ public class VehicleHandler : MonoBehaviour
     void Start()
     {
         m_rigidBodyRef = GetComponent<Rigidbody>();
+        m_hoverPads = new HoverPad[4] { m_hoverPadFrontLeft, m_hoverPadFrontRight, m_hoverPadBackLeft, m_hoverPadBackRight};
+        //for (int i = 0; i < m_hoverPads.Length; i++)
+        //{
+        //    m_centreOfMassRef.transform.localPosition += m_hoverPads[i].transform.localPosition;
+        //}
+        //m_centreOfMassRef.transform.localPosition /= m_hoverPads.Length;
+        m_rigidBodyRef.centerOfMass = m_centreOfMassRef.transform.localPosition;
     }
+
+
 
     // Update is called once per frame
     void Update()
     {
         m_speedReadoutText.text = (m_rigidBodyRef.velocity.magnitude * 3.6f).ToString("f2") + " km/h";
-        m_rigidBodyRef.centerOfMass = m_centreOfMassRef.transform.localPosition;
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             m_rigidBodyRef.AddRelativeForce(Vector3.up * 1000f * m_rigidBodyRef.mass);
@@ -60,7 +70,7 @@ public class VehicleHandler : MonoBehaviour
         float rollTorque = -yawTorque / 5f;
 
         m_rigidBodyRef.AddRelativeTorque(new Vector3(0f, yawTorque, 0f));
-        m_rigidBodyRef.AddRelativeTorque(new Vector3(0f, 0f, rollTorque));
+        //m_rigidBodyRef.AddRelativeTorque(new Vector3(0f, 0f, rollTorque));
 
         //m_hoverPadFrontLeft.SetThrottle(1f + steeringDirection * 0.3f);
         //m_hoverPadBackLeft.SetThrottle(1f + steeringDirection * 0.3f);
