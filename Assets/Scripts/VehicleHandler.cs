@@ -17,11 +17,12 @@ public class VehicleHandler : MonoBehaviour
 
     float m_steeringAngle = 0f;
     const float m_steeringSpeed = 45f;
-    const float m_maxSteeringAngle = 20f;
+    const float m_maxSteeringAngle = 45f;
     Rigidbody m_rigidBodyRef;
 
     [SerializeField] float m_torque = 500f;
     [SerializeField] float m_brakingForce = 300f;
+    float m_rollTorqueStrength = 50f;
     [SerializeField] TextMeshProUGUI m_speedReadoutText;
 
     // Start is called before the first frame update
@@ -42,8 +43,8 @@ public class VehicleHandler : MonoBehaviour
 
     void ApplyCounterFlipTorque()
     {
-        float counterTorque = -transform.localEulerAngles.z * Time.fixedDeltaTime * 1000f;
-        m_rigidBodyRef.AddTorque(0f, 0f, counterTorque);
+        float counterTorque = -VLib.ClampRotation(transform.localEulerAngles.z) * Time.fixedDeltaTime * m_rigidBodyRef.mass * 30f;
+        m_rigidBodyRef.AddRelativeTorque(0f, 0f, counterTorque);
         Debug.Log(counterTorque);
     }
 
@@ -84,13 +85,15 @@ public class VehicleHandler : MonoBehaviour
             m_backWheels[i].motorTorque = Input.GetKey(KeyCode.W) ? m_torque : (Input.GetKey(KeyCode.S) ? -m_torque: 0f);
         }
 
-        if ((Input.GetKey(KeyCode.Q)))
+        float rollInput = Input.GetKey(KeyCode.Q) ? 1f : (Input.GetKey(KeyCode.E) ? -1f : 0f);
+
+        if (rollInput != 0f)
         {
-            m_rigidBodyRef.AddTorque(0f, 0f, 50 * m_rigidBodyRef.mass);
+            m_rigidBodyRef.AddRelativeTorque(0f, 0f, m_rollTorqueStrength * m_rigidBodyRef.mass * rollInput);
         }
 
         HandleSteering();
 
-        ApplyCounterFlipTorque();
+        //ApplyCounterFlipTorque();
     }
 }
