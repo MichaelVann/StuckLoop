@@ -73,10 +73,17 @@ public class VehicleHandler : MonoBehaviour
         m_rigidBodyRef.AddTorque(new Vector3(0f, yawTorque, 0f));
         //m_rigidBodyRef.AddRelativeTorque(new Vector3(0f, 0f, rollTorque));
 
-        //m_hoverPadFrontLeft.SetThrottle(1f + steeringDirection * 0.3f);
-        //m_hoverPadBackLeft.SetThrottle(1f + steeringDirection * 0.3f);
-        //m_hoverPadFrontRight.SetThrottle(1f - steeringDirection * 0.3f);
-        //m_hoverPadBackRight.SetThrottle(1f - steeringDirection * 0.3f);
+    }
+
+    void ApplyVerticalDampening()
+    {
+        float groundContactPercent = 0f;
+        for (int i = 0; i < m_hoverPads.Length; i++)
+        {
+            groundContactPercent += m_hoverPads[i].IsInteractingWithGround() ? 0.25f : 0f; 
+        }
+        Vector3 stabilisingForceY = new Vector3(0f, -m_rigidBodyRef.velocity.y * m_stabilisingVerticalForceStrength * groundContactPercent * m_rigidBodyRef.mass * Time.fixedDeltaTime, 0f);
+        m_rigidBodyRef.AddRelativeForce(stabilisingForceY);
     }
 
     void FixedUpdate()
@@ -96,12 +103,14 @@ public class VehicleHandler : MonoBehaviour
         {
             m_rigidBodyRef.AddRelativeForce(-Vector3.forward * 1000f * m_rigidBodyRef.mass * Time.fixedDeltaTime);
         }
-        Vector3 stabilisingForceY = new Vector3(0f, -m_rigidBodyRef.velocity.y * m_stabilisingVerticalForceStrength * m_rigidBodyRef.mass * Time.fixedDeltaTime, 0f);
-        m_rigidBodyRef.AddRelativeForce(stabilisingForceY);
+
+        ApplyVerticalDampening();
 
         HandleSteering();
 
         Vector3 deltaHeading = transform.forward - m_rigidBodyRef.velocity.normalized;
+        //REMOVE COMPONENT OF VECTOR PERPENDICULAR TO transform.up
+
         m_rigidBodyRef.AddForce(deltaHeading * Time.deltaTime * m_rigidBodyRef.velocity.magnitude * 100f* m_rigidBodyRef.mass);
 
 

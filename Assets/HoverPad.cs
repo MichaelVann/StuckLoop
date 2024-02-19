@@ -7,8 +7,11 @@ public class HoverPad : MonoBehaviour
     [SerializeField] Rigidbody m_parentRigidbody;
     float m_maxDistanceStrength = 0f;
     float m_throttle = 1f;
+    bool m_interactingWithGround = false;
 
     internal void SetThrottle(float a_throttle) { m_throttle = a_throttle; }
+
+    internal bool IsInteractingWithGround() { return m_interactingWithGround; }
 
     // Start is called before the first frame update
     void Start()
@@ -20,7 +23,8 @@ public class HoverPad : MonoBehaviour
     {
         RaycastHit hit;
 
-        if (Physics.Raycast(transform.position, -transform.up, out hit))
+        m_interactingWithGround = Physics.Raycast(transform.position, -transform.up, out hit, 3f);
+        if (m_interactingWithGround)
         { 
             float distance = hit.distance;
             float distanceStrength = 1f / Mathf.Pow(distance, 2f);
@@ -31,7 +35,6 @@ public class HoverPad : MonoBehaviour
             m_parentRigidbody.AddForceAtPosition(force, transform.position);
 
             float desiredVerticalSpeed = Mathf.Sqrt(2f * Physics.gravity.y * distance);
-
         }
 
     }
