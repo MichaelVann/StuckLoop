@@ -4806,10 +4806,6 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
-    - target: {fileID: 5460297601720921824, guid: 284576d2a9b161f4896f1230a6362d77, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.257
-      objectReference: {fileID: 0}
     - target: {fileID: 5602737876578127683, guid: 284576d2a9b161f4896f1230a6362d77, type: 3}
       propertyPath: m_SidewaysFriction.m_ExtremumValue
       value: 4

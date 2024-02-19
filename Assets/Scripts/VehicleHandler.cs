@@ -20,6 +20,7 @@ public class VehicleHandler : MonoBehaviour
     Rigidbody m_rigidBodyRef;
 
     const float m_hoverStrength = 480f;
+    const float m_desiredGroundHeight = 3f;
 
     [SerializeField] float m_torque = 500f;
     [SerializeField] float m_brakingForce = 300f;
@@ -47,13 +48,6 @@ public class VehicleHandler : MonoBehaviour
     {
         m_speedReadoutText.text = (m_rigidBodyRef.velocity.magnitude * 3.6f).ToString("f2") + " km/h";
         m_cameraRef.fieldOfView = 60f + m_rigidBodyRef.velocity.magnitude / 10f;
-    }
-
-    void ApplyCounterFlipTorque()
-    {
-        float counterTorque = -VLib.ClampRotation(transform.localEulerAngles.z) * Time.fixedDeltaTime * m_rigidBodyRef.mass * 30f;
-        m_rigidBodyRef.AddRelativeTorque(0f, 0f, counterTorque);
-        Debug.Log(counterTorque);
     }
 
     void UpdateGroundContactStrength()
@@ -131,6 +125,20 @@ public class VehicleHandler : MonoBehaviour
         //m_rigidBodyRef.AddTorque(noseAlignRotation.eulerAngles * Time.deltaTime * m_rigidBodyRef.mass * 10f);
 
         Vector3 rotationAxis = Vector3.Cross(transform.forward, m_rigidBodyRef.velocity.normalized);
+        m_rigidBodyRef.AddTorque(rotationAxis * m_rigidBodyRef.mass * m_rigidBodyRef.velocity.magnitude * 0.3f);
+    }
+
+    void ApplyPitchDampening()
+    {
+        Vector3 meanSurfaceNormal = Vector3.zero;
+
+        for (int i = 0; i < m_hoverPads.Length; i++)
+        {
+            meanSurfaceNormal += m_hoverPads[i].GetSurfaceNormal();
+        }
+        meanSurfaceNormal /= m_hoverPads.Length;
+
+        Vector3 rotationAxis = Vector3.Cross(transform.up, meanSurfaceNormal);
         m_rigidBodyRef.AddTorque(rotationAxis * m_rigidBodyRef.mass * m_rigidBodyRef.velocity.magnitude * 0.3f);
     }
 
