@@ -8,12 +8,15 @@ public class HoverPad : MonoBehaviour
     float m_maxDistanceStrength = 0f;
     float m_hoverStrength = 120f;
     bool m_interactingWithGround = false;
+    VehicleHandler m_vehicleHandlerRef;
 
     internal bool IsInteractingWithGround() { return m_interactingWithGround; }
 
     // Start is called before the first frame update
     void Start()
     {
+        m_vehicleHandlerRef = FindObjectOfType<VehicleHandler>();
+        m_hoverStrength = m_vehicleHandlerRef.GetHoverPadStrength();
     }
 
     // Update is called once per frame
@@ -34,6 +37,5 @@ public class HoverPad : MonoBehaviour
 
             float desiredVerticalSpeed = Mathf.Sqrt(2f * Physics.gravity.y * distance);
         }
-
     }
 }

@@ -6,17 +6,20 @@ using static UnityEngine.GraphicsBuffer;
 
 public class VehicleHandler : MonoBehaviour
 {
-    [SerializeField] HoverPad m_hoverPadFrontLeft;
-    [SerializeField] HoverPad m_hoverPadFrontRight;
-    [SerializeField] HoverPad m_hoverPadBackLeft;
-    [SerializeField] HoverPad m_hoverPadBackRight;
-    HoverPad[] m_hoverPads;
+    //[SerializeField] HoverPad m_hoverPadFrontLeft;
+    //[SerializeField] HoverPad m_hoverPadFrontRight;
+    //[SerializeField] HoverPad m_hoverPadBackLeft;
+    //[SerializeField] HoverPad m_hoverPadBackRight;
+    [SerializeField] HoverPad[] m_hoverPads;
+    [SerializeField] Camera m_cameraRef;
     const float m_stabilisingVerticalForceStrength = 50f;
 
     [SerializeField] GameObject m_centreOfMassRef;
 
     const float m_steeringTorque = 75f;
     Rigidbody m_rigidBodyRef;
+
+    const float m_hoverStrength = 480f;
 
     [SerializeField] float m_torque = 500f;
     [SerializeField] float m_brakingForce = 300f;
@@ -25,11 +28,16 @@ public class VehicleHandler : MonoBehaviour
     float m_groundContactStrength = 0f;
     Vector3 m_inertiaSteeringForce = Vector3.zero;
 
+    internal float GetHoverPadStrength()
+    {
+        return m_hoverStrength / m_hoverPads.Length;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
         m_rigidBodyRef = GetComponent<Rigidbody>();
-        m_hoverPads = new HoverPad[4] { m_hoverPadFrontLeft, m_hoverPadFrontRight, m_hoverPadBackLeft, m_hoverPadBackRight};
+        //m_hoverPads = new HoverPad[4] { m_hoverPadFrontLeft, m_hoverPadFrontRight, m_hoverPadBackLeft, m_hoverPadBackRight};
 
         m_rigidBodyRef.centerOfMass = m_centreOfMassRef.transform.localPosition;
     }
@@ -38,6 +46,7 @@ public class VehicleHandler : MonoBehaviour
     void Update()
     {
         m_speedReadoutText.text = (m_rigidBodyRef.velocity.magnitude * 3.6f).ToString("f2") + " km/h";
+        m_cameraRef.fieldOfView = 60f + m_rigidBodyRef.velocity.magnitude / 10f;
     }
 
     void ApplyCounterFlipTorque()
