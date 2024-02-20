@@ -7,6 +7,7 @@ using static UnityEngine.GraphicsBuffer;
 public class VehicleHandler : MonoBehaviour
 {
     [SerializeField] HoverPad[] m_hoverPads;
+    GhostManager m_ghostManagerRef;
     const float m_stabilisingVerticalForceStrength = 50f;
 
     [SerializeField] GameObject m_centreOfMassRef;
@@ -29,8 +30,9 @@ public class VehicleHandler : MonoBehaviour
 
 
     //Lap Recording
-    bool m_inSecondHalf = false;
-    List<Vector3> m_lapRecording;
+    bool m_inSecondHalf = true;
+
+    List<Ghost.LapPointData> m_lapRecording;
 
     internal float GetHoverPadStrength()
     {
@@ -44,6 +46,7 @@ public class VehicleHandler : MonoBehaviour
         //m_hoverPads = new HoverPad[4] { m_hoverPadFrontLeft, m_hoverPadFrontRight, m_hoverPadBackLeft, m_hoverPadBackRight};
 
         m_rigidBodyRef.centerOfMass = m_centreOfMassRef.transform.localPosition;
+        m_ghostManagerRef = FindObjectOfType<GhostManager>();
     }
 
     // Update is called once per frame
@@ -144,6 +147,17 @@ public class VehicleHandler : MonoBehaviour
         m_rigidBodyRef.AddTorque(rotationAxis * m_rigidBodyRef.mass * m_rigidBodyRef.velocity.magnitude * 0.3f);
     }
 
+    void RecordLapPosition()
+    {
+        if (m_lapRecording != null)
+        {
+            Ghost.LapPointData lapPointData = new Ghost.LapPointData();
+            lapPointData.position = transform.position;
+            lapPointData.rotation = transform.rotation;
+            m_lapRecording.Add(lapPointData);
+        }
+    }
+
     void FixedUpdate()
     {
         UpdateGroundContactStrength();
@@ -171,7 +185,7 @@ public class VehicleHandler : MonoBehaviour
         ApplyIntertiaSteering();
         ApplyNoseAlignTorque();
         HandleSteering();
-
+        RecordLapPosition();
         //ApplyCounterFlipTorque();
     }
 
@@ -183,14 +197,14 @@ public class VehicleHandler : MonoBehaviour
 
     void StartLapRecording()
     {
-        m_lapRecording = new List<Vector3>();
+        m_lapRecording = new List<Ghost.LapPointData>();
     }
 
     void CompleteLap()
     {
         if (m_lapRecording != null)
         {
-
+            m_ghostManagerRef.CompleteLap(m_lapRecording);
         }
         StartLapRecording();
     }
@@ -201,6 +215,10 @@ public class VehicleHandler : MonoBehaviour
         {
             m_inSecondHalf = false;
             CompleteLap();
+        }
+        else if (a_collider.gameObject.tag == "Halfway Field" && !m_inSecondHalf)
+        {
+            m_inSecondHalf = true;
         }
     }
 }

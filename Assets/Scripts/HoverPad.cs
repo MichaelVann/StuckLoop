@@ -55,7 +55,10 @@ public class HoverPad : MonoBehaviour
         {
             m_surfaceNormal = hit.normal;
             m_groundDistance = hit.distance;
-            RepelGround(hit.distance);
+            if (m_parentRigidbody != null)
+            {
+                RepelGround(hit.distance);
+            }
 
             //FX
             m_dustParticleSystemRef.transform.position = hit.point;
@@ -63,7 +66,7 @@ public class HoverPad : MonoBehaviour
             ParticleSystem.MainModule alteredParticleMainModule = m_dustParticleSystemRef.main;
             alteredParticleMainModule.startSize = 1f/ hit.distance;
             ParticleSystem.ShapeModule shapeModule = m_dustParticleSystemRef.shape;
-            shapeModule.radius = Mathf.Tan(m_spotlightHalfAngle * Mathf.PI / 180f) * m_groundDistance;
+            shapeModule.radius = Mathf.Tan(m_spotlightHalfAngle * VLib._degreesToRadians) * m_groundDistance;
             if (!m_dustParticleSystemRef.isPlaying)
             {
                 m_dustParticleSystemRef.Play();

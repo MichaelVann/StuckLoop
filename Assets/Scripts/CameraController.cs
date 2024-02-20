@@ -10,6 +10,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] float m_tilt;
     float m_currentAngle = 0f;
     const float m_cameraAlignSpeed = 7f;
+    float m_desiredFov = 0f;
 
     // Start is called before the first frame update
     void Start()
@@ -25,7 +26,7 @@ public class CameraController : MonoBehaviour
         m_currentAngle = VLib.ClampRotation(Mathf.Lerp(m_currentAngle, m_currentAngle + deltaAngle, Time.deltaTime * m_cameraAlignSpeed));
         transform.localEulerAngles = new Vector3(m_tilt, m_currentAngle, 0f);
         transform.position = m_playerRigidbodyRef.transform.position + Quaternion.Euler(0f,m_currentAngle,0f) * m_playerFollowOffset;
-        m_cameraRef.fieldOfView = 60f + m_playerRigidbodyRef.velocity.magnitude / 4f;
-
+        m_desiredFov = 60f + m_playerRigidbodyRef.velocity.magnitude / 4f;
+        m_cameraRef.fieldOfView = Mathf.Lerp(m_cameraRef.fieldOfView, m_desiredFov, Time.deltaTime*5f);
     }
 }
