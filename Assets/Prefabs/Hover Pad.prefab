@@ -105,7 +105,7 @@ GameObject:
   - component: {fileID: 2250389752194942312}
   - component: {fileID: 6018739313901458222}
   m_Layer: 6
-  m_Name: Spot Light (1)
+  m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5062,6 +5062,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentRigidbody: {fileID: 0}
+  m_spotlightRef: {fileID: 1723067339190292974}
   m_dustParticleSystemRef: {fileID: 4234477715028555970}
 --- !u!1 &6123858853649694028
 GameObject:
@@ -5933,7 +5934,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 500
+      scalar: 5000
       minScalar: 10
       maxCurve:
         serializedVersion: 2

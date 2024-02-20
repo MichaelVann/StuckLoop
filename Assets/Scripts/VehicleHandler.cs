@@ -6,12 +6,7 @@ using static UnityEngine.GraphicsBuffer;
 
 public class VehicleHandler : MonoBehaviour
 {
-    //[SerializeField] HoverPad m_hoverPadFrontLeft;
-    //[SerializeField] HoverPad m_hoverPadFrontRight;
-    //[SerializeField] HoverPad m_hoverPadBackLeft;
-    //[SerializeField] HoverPad m_hoverPadBackRight;
     [SerializeField] HoverPad[] m_hoverPads;
-    [SerializeField] Camera m_cameraRef;
     const float m_stabilisingVerticalForceStrength = 50f;
 
     [SerializeField] GameObject m_centreOfMassRef;
@@ -19,7 +14,7 @@ public class VehicleHandler : MonoBehaviour
     const float m_steeringTorque = 75f;
     Rigidbody m_rigidBodyRef;
 
-    const float m_hoverStrength = 480f;
+    const float m_hoverStrength = 2080f;
     const float m_desiredGroundHeight = 3f;
 
     [SerializeField] float m_torque = 500f;
@@ -28,6 +23,14 @@ public class VehicleHandler : MonoBehaviour
     [SerializeField] TextMeshProUGUI m_speedReadoutText;
     float m_groundContactStrength = 0f;
     Vector3 m_inertiaSteeringForce = Vector3.zero;
+
+    float m_jumpCooldown = 0f;
+    float m_jumpMaxCooldown = 1f;
+
+
+    //Lap Recording
+    bool m_inSecondHalf = false;
+    List<Vector3> m_lapRecording;
 
     internal float GetHoverPadStrength()
     {
@@ -47,7 +50,6 @@ public class VehicleHandler : MonoBehaviour
     void Update()
     {
         m_speedReadoutText.text = (m_rigidBodyRef.velocity.magnitude * 3.6f).ToString("f2") + " km/h";
-        m_cameraRef.fieldOfView = 60f + m_rigidBodyRef.velocity.magnitude / 10f;
     }
 
     void UpdateGroundContactStrength()
@@ -155,9 +157,14 @@ public class VehicleHandler : MonoBehaviour
             m_rigidBodyRef.AddRelativeForce(-Vector3.forward * 1000f * m_rigidBodyRef.mass * Time.fixedDeltaTime);
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (m_jumpCooldown > 0f)
         {
-            m_rigidBodyRef.AddRelativeForce(Vector3.up * 1000f * m_rigidBodyRef.mass);
+            m_jumpCooldown = Mathf.Clamp(m_jumpCooldown - Time.fixedDeltaTime, 0f, m_jumpMaxCooldown);
+        }
+        else if (Input.GetKey(KeyCode.Space) && m_groundContactStrength > 0f)
+        {
+            m_rigidBodyRef.AddRelativeForce(Vector3.up * 1000f * m_rigidBodyRef.mass * m_groundContactStrength);
+            m_jumpCooldown = m_jumpMaxCooldown;
         }
 
         ApplyVerticalDampening();
@@ -172,5 +179,28 @@ public class VehicleHandler : MonoBehaviour
     {
         Gizmos.color = Color.blue;
         Gizmos.DrawLine(transform.position, transform.position + m_inertiaSteeringForce*2f);
+    }
+
+    void StartLapRecording()
+    {
+        m_lapRecording = new List<Vector3>();
+    }
+
+    void CompleteLap()
+    {
+        if (m_lapRecording != null)
+        {
+
+        }
+        StartLapRecording();
+    }
+
+    private void OnTriggerEnter(Collider a_collider)
+    {
+        if (a_collider.gameObject.tag == "Mirror Field" && m_inSecondHalf)
+        {
+            m_inSecondHalf = false;
+            CompleteLap();
+        }
     }
 }

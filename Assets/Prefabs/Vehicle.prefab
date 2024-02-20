@@ -864,7 +864,6 @@ MonoBehaviour:
   - {fileID: 7227719114854046753}
   - {fileID: 1855363296741672584}
   - {fileID: 7340690427298734823}
-  m_cameraRef: {fileID: 0}
   m_centreOfMassRef: {fileID: 5421185098415610851}
   m_torque: 1000
   m_brakingForce: 300
