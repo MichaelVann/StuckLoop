@@ -83,7 +83,7 @@ public class VehicleHandler : MonoBehaviour
         //m_rigidBodyRef.AddRelativeTorque(new Vector3(0f, 0f, rollTorque));
 
         float rollInput = Input.GetKey(KeyCode.Q) ? 1f : (Input.GetKey(KeyCode.E) ? -1f : 0f);
-        float pitchInput = Input.GetKey(KeyCode.F) ? 1f : (Input.GetKey(KeyCode.R) ? -1f : 0f);
+        float pitchInput = Input.GetKey(KeyCode.LeftShift) ? 1f : (Input.GetKey(KeyCode.LeftControl) ? -1f : 0f);
 
         if (rollInput != 0f)
         {
@@ -219,6 +219,14 @@ public class VehicleHandler : MonoBehaviour
         else if (a_collider.gameObject.tag == "Halfway Field" && !m_inSecondHalf)
         {
             m_inSecondHalf = true;
+        }
+    }
+
+    private void OnCollisionEnter(Collision a_collision)
+    {
+        if (a_collision.gameObject.tag == "Ghost")
+        {
+            //Debug.Break();
         }
     }
 }
