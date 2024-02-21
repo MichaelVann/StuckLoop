@@ -7,7 +7,7 @@ using static UnityEngine.GraphicsBuffer;
 public class VehicleHandler : MonoBehaviour
 {
     [SerializeField] HoverPad[] m_hoverPads;
-    GameManager m_ghostManagerRef;
+    GameManager m_gameManagerRef;
     const float m_stabilisingVerticalForceStrength = 50f;
 
     [SerializeField] GameObject m_centreOfMassRef;
@@ -53,7 +53,7 @@ public class VehicleHandler : MonoBehaviour
         //m_hoverPads = new HoverPad[4] { m_hoverPadFrontLeft, m_hoverPadFrontRight, m_hoverPadBackLeft, m_hoverPadBackRight};
 
         m_rigidBodyRef.centerOfMass = m_centreOfMassRef.transform.localPosition;
-        m_ghostManagerRef = FindObjectOfType<GameManager>();
+        m_gameManagerRef = FindObjectOfType<GameManager>();
         UpdateLapText();
     }
 
@@ -219,7 +219,7 @@ public class VehicleHandler : MonoBehaviour
     {
         if (m_lapRecording != null)
         {
-            m_ghostManagerRef.CompleteLap(m_lapRecording);
+            m_gameManagerRef.CompleteLap(m_lapRecording);
             m_lap++;
             UpdateLapText();
         }
@@ -240,6 +240,7 @@ public class VehicleHandler : MonoBehaviour
         else if (a_collider.gameObject.tag == "Eliminator Field")
         {
             Destroy(gameObject);
+            m_gameManagerRef.EndGame();
         }
     }
 
@@ -249,10 +250,5 @@ public class VehicleHandler : MonoBehaviour
         {
             //Debug.Break();
         }
-    }
-
-    private void OnDestroy()
-    {
-        
     }
 }

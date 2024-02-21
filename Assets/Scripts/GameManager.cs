@@ -1,11 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     [SerializeField] GameObject m_ghostPrefab;
     EliminatorFieldHandler m_eliminatorFieldRef;
+
+    [SerializeField] GameObject m_gameHudRef;
+    [SerializeField] GameObject m_endGameScreenRef;
 
     List<Ghost> m_ghostList;
     // Start is called before the first frame update
@@ -41,5 +45,16 @@ public class GameManager : MonoBehaviour
         SpawnGhost(a_lapRecording);
         ResetGhosts();
         m_eliminatorFieldRef.ResetToStartPosition();
+    }
+
+    internal void EndGame()
+    {
+        m_gameHudRef.SetActive(false);
+        m_endGameScreenRef.SetActive(true);
+    }
+
+    internal void RestartGame()
+    {
+        SceneManager.LoadScene("Main");
     }
 }
