@@ -22,15 +22,10 @@ public class EliminatorFieldHandler : MonoBehaviour
 
     float m_movementSpeed = 300f/VLib._msToKmh;
     float m_cappedMovementSpeed = 1000f/ VLib._msToKmh;
-    float m_acceleration = 0.2f;
+    float m_acceleration = 0.11f;
     float m_lerpPercentage = 0f;
     float m_lerpDistance = 0f;
     float m_currentAngle = 0f;
-
-    //Grace
-    bool m_inGracePeriod;
-    int m_gracePeriodCount = 0;
-    int m_gracePeriodFrames = 25;
 
     // Start is called before the first frame update
     void Start()
@@ -39,7 +34,6 @@ public class EliminatorFieldHandler : MonoBehaviour
         ResetToStartPosition();
         m_lerpDistance = (m_moveFromPoint - m_moveTowardsPoint).magnitude;
         m_fieldOffsetDistance = (m_fieldTransformRef.localPosition.magnitude);
-        //m_lerpPercentage = 0.4f * m_lerpDistance;
     }
 
     internal void ResetToStartPosition()
@@ -49,19 +43,14 @@ public class EliminatorFieldHandler : MonoBehaviour
         m_movingForwards = true;
         m_moveFromPoint = m_patrolPointBRef.position;
         m_moveTowardsPoint = m_patrolPointARef.position;
-        SetGracePeriodStatus(true);
         ResetLerpPoints();
     }
 
     void ResetLerpPoints()
     {
         m_lerpPercentage = 0f;
+        //Lerp distance is half of circumfrance (2 pi r)
         m_lerpDistance = m_rotating ? Mathf.PI * m_fieldOffsetDistance : (m_moveFromPoint - m_moveTowardsPoint).magnitude;
-    }
-    void SetGracePeriodStatus(bool a_isInGracePeriod)
-    {
-        m_inGracePeriod = a_isInGracePeriod;
-        m_rigidBody.detectCollisions = !a_isInGracePeriod;
     }
 
     // Update is called once per frame
@@ -69,6 +58,8 @@ public class EliminatorFieldHandler : MonoBehaviour
     {
         m_movementSpeed = Mathf.Clamp(m_movementSpeed + m_acceleration * Time.fixedDeltaTime, 0f, m_cappedMovementSpeed);
         m_speedReadoutText.text = ((int)(m_movementSpeed * VLib._msToKmh)).ToString();
+
+        //If in the rotating section, rotate through the corner
         if (m_rotating)
         {
             m_lerpPercentage += m_movementSpeed * Time.fixedDeltaTime;
@@ -77,7 +68,6 @@ public class EliminatorFieldHandler : MonoBehaviour
 
             m_rigidBody.MoveRotation(Quaternion.Euler(0f, -angle, 0f));
 
-            //transform.eulerAngles = new Vector3(0f, -angle, 0f);
             if (lerp >= 1f)
             {
                 m_rotating = false;
@@ -87,7 +77,7 @@ public class EliminatorFieldHandler : MonoBehaviour
                 ResetLerpPoints();
             }
         }
-        else
+        else // Lerp over the length of the pipe
         {
             m_lerpPercentage += m_movementSpeed * Time.fixedDeltaTime;
 
@@ -102,23 +92,5 @@ public class EliminatorFieldHandler : MonoBehaviour
                 m_currentAngle = m_movingForwards ? 0f : 180f;
             }
         }
-
-        if (m_inGracePeriod)
-        {
-            m_gracePeriodCount++;
-            if (m_gracePeriodCount >= m_gracePeriodFrames)
-            {
-                SetGracePeriodStatus(false);
-                m_inGracePeriod = false;
-            }
-        }
     }
-
-    //private void OnTriggerEnter(Collider a_collider)
-    //{
-    //    if (a_collider.gameObject.tag == "Vehicle" || a_collider.gameObject.tag == "Ghost")
-    //    {
-    //        Destroy(a_collider.gameObject);
-    //    }
-    //}
 }

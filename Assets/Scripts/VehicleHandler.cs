@@ -18,7 +18,7 @@ public class VehicleHandler : MonoBehaviour
     const float m_steeringTorque = 75f;
     Rigidbody m_rigidBodyRef;
 
-    const float m_hoverStrength = 2080f;
+    const float m_hoverStrength = 10080f;
     const float m_desiredGroundHeight = 3f;
 
     [SerializeField] float m_torque = 500f;
@@ -46,7 +46,6 @@ public class VehicleHandler : MonoBehaviour
     void Start()
     {
         m_rigidBodyRef = GetComponent<Rigidbody>();
-        //m_hoverPads = new HoverPad[4] { m_hoverPadFrontLeft, m_hoverPadFrontRight, m_hoverPadBackLeft, m_hoverPadBackRight};
 
         m_rigidBodyRef.centerOfMass = m_centreOfMassRef.transform.localPosition;
         m_gameManagerRef = FindObjectOfType<GameManager>();
@@ -82,10 +81,8 @@ public class VehicleHandler : MonoBehaviour
         }
 
         float yawTorque = steeringDirection * m_steeringTorque * m_rigidBodyRef.mass;
-        float rollTorque = -yawTorque / 5f;
 
         m_rigidBodyRef.AddRelativeTorque(new Vector3(0f, yawTorque, 0f));
-        //m_rigidBodyRef.AddRelativeTorque(new Vector3(0f, 0f, rollTorque));
 
         float rollInput = Input.GetKey(KeyCode.Q) ? 1f : (Input.GetKey(KeyCode.E) ? -1f : 0f);
         float pitchInput = Input.GetKey(KeyCode.LeftShift) ? 1f : (Input.GetKey(KeyCode.LeftControl) ? -1f : 0f);
@@ -101,6 +98,7 @@ public class VehicleHandler : MonoBehaviour
         }
     }
 
+    //Imparts an inverse force to current vertical velocity to dampen bouncing
     void ApplyVerticalDampening()
     {
         Vector3 stabilisingForceY = new Vector3(0f, -m_rigidBodyRef.velocity.y * m_stabilisingVerticalForceStrength * m_groundContactStrength * m_rigidBodyRef.mass * Time.fixedDeltaTime, 0f);
@@ -113,6 +111,7 @@ public class VehicleHandler : MonoBehaviour
         m_rigidBodyRef.AddRelativeTorque(0f, 0f, rollDamp);
     }
 
+    //Rotates the vehicles momentum to align with the nose of the vehicle, only in the local Y plane however
     void ApplyIntertiaSteering()
     {
         Vector3 planarVelocity = m_rigidBodyRef.velocity.normalized;
@@ -129,11 +128,10 @@ public class VehicleHandler : MonoBehaviour
         m_rigidBodyRef.AddForce(m_groundContactStrength * deltaHeading * Time.deltaTime * m_rigidBodyRef.velocity.magnitude * 100f * m_rigidBodyRef.mass);
     }
 
+    //Turns the vehicle to align with the direction of movement
+
     void ApplyNoseAlignTorque()
     {
-        //Quaternion noseAlignRotation = Quaternion.FromToRotation(transform.forward, m_rigidBodyRef.velocity.normalized);
-        //m_rigidBodyRef.AddTorque(noseAlignRotation.eulerAngles * Time.deltaTime * m_rigidBodyRef.mass * 10f);
-
         Vector3 rotationAxis = Vector3.Cross(transform.forward, m_rigidBodyRef.velocity.normalized);
         m_rigidBodyRef.AddTorque(rotationAxis * m_rigidBodyRef.mass * m_rigidBodyRef.velocity.magnitude * 0.3f);
     }
@@ -191,7 +189,6 @@ public class VehicleHandler : MonoBehaviour
         ApplyNoseAlignTorque();
         HandleSteering();
         RecordLapPosition();
-        //ApplyCounterFlipTorque();
     }
 
     void OnDrawGizmosSelected()
@@ -204,8 +201,6 @@ public class VehicleHandler : MonoBehaviour
     {
         m_lapRecording = new List<Ghost.LapPointData>();
     }
-
-
 
     void CompleteLap()
     {
@@ -238,7 +233,7 @@ public class VehicleHandler : MonoBehaviour
     {
         if (a_collision.gameObject.tag == "Ghost")
         {
-            //Debug.Break();
+            //Destroy player? Might be fun to have to avoid ghosts
         }
     }
 }

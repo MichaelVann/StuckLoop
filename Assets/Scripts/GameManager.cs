@@ -13,11 +13,14 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject m_gameHudRef;
     [SerializeField] GameObject m_endGameScreenRef;
     [SerializeField] TextMeshProUGUI m_lapReadoutText;
+    [SerializeField] TextMeshProUGUI m_fpsText;
 
     int m_lap = 1;
     internal const int _maxLaps = 30;
 
     bool m_paused = false;
+
+    vTimer fpsTimer;
 
     internal int GetLaps() { return m_lap; }
 
@@ -25,9 +28,12 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Application.targetFrameRate = 144;
         m_ghostList = new List<Ghost>();
         m_eliminatorFieldRef = FindObjectOfType<EliminatorFieldHandler>();
         UpdateLapText();
+        fpsTimer = new vTimer(0.25f);
+        fpsTimer.SetUsingUnscaledDeltaTime(true);
     }
 
     // Update is called once per frame
@@ -37,6 +43,11 @@ public class GameManager : MonoBehaviour
         {
             SetPaused(!m_paused);
         }
+        if (fpsTimer.Update())
+        {
+            m_fpsText.text = (1f / Time.fixedDeltaTime).ToString("F0") + " fps";
+        }
+
     }
     void UpdateLapText()
     {
@@ -62,7 +73,6 @@ public class GameManager : MonoBehaviour
     {
         SpawnGhost(a_lapRecording);
         ResetGhosts();
-        //m_eliminatorFieldRef.ResetToStartPosition();
         m_lap++;
         UpdateLapText();
     }

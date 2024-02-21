@@ -34,6 +34,7 @@ public class HoverPad : MonoBehaviour
         m_spotlightHalfAngle = m_spotlightRef.spotAngle/2f;
     }
 
+    //Repels from the ground and imparts a force on the owning rigidbody, stores ground interaction strength as well, spawns effects
     void RepelGround(float a_groundDistance)
     {
         float distance = a_groundDistance;
@@ -46,7 +47,7 @@ public class HoverPad : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         RaycastHit hit;
 

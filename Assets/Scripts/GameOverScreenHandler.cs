@@ -19,6 +19,7 @@ public class GameOverScreenHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Simple sine wave that is offset to give a value between 0.5 and 1 at 4hz
         float titleRedAmount = (Mathf.Sin(Time.time*5f)+1f)/4f + 0.5f;
         m_gameOverTitleText.color = new Color(titleRedAmount, 0f, 0f);
     }

@@ -40,6 +40,7 @@ public class Ghost : MonoBehaviour
         }
     }
 
+    //Sets collider to be disabled while teleporting to start line, to avoid colliding with player and imparting insane KE
     void SetGracePeriodStatus(bool a_isInGracePeriod)
     {
         m_rigidbodyRef.detectCollisions = !a_isInGracePeriod;
@@ -58,8 +59,6 @@ public class Ghost : MonoBehaviour
     void FixedUpdate()
     {
         m_rigidbodyRef.Move(m_lapRecording[m_lapRecordingPosition].position, m_lapRecording[m_lapRecordingPosition].rotation);
-        //transform.position = m_lapRecording[m_lapRecordingPosition].position;
-        //transform.rotation = m_lapRecording[m_lapRecordingPosition].rotation;
 
         m_lapRecordingPosition++;
 
