@@ -138,8 +138,8 @@ Light:
   m_Type: 2
   m_Shape: 0
   m_Color: {r: 0, g: 0.8145137, b: 1, a: 1}
-  m_Intensity: 13.73
-  m_Range: 2.59
+  m_Intensity: 0.3
+  m_Range: 79.6
   m_SpotAngle: 65.2
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
@@ -5091,7 +5091,7 @@ Transform:
   m_GameObject: {fileID: 6123858853649694028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.0211}
+  m_LocalPosition: {x: 0, y: 0, z: -0.0721}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9940,6 +9940,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 9b8f3e07e000df248a767a2f6247c584, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 965e42f3b0ad9a844aedf8e72259f2d9, type: 2}
     - target: {fileID: 919132149155446097, guid: 9b8f3e07e000df248a767a2f6247c584, type: 3}
       propertyPath: m_Name
       value: HoverPad

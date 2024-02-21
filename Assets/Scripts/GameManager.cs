@@ -2,14 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GhostManager : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     [SerializeField] GameObject m_ghostPrefab;
+    EliminatorFieldHandler m_eliminatorFieldRef;
+
     List<Ghost> m_ghostList;
     // Start is called before the first frame update
     void Start()
     {
         m_ghostList = new List<Ghost>();
+        m_eliminatorFieldRef = FindObjectOfType<EliminatorFieldHandler>();
     }
 
     // Update is called once per frame
@@ -37,5 +40,6 @@ public class GhostManager : MonoBehaviour
     {
         SpawnGhost(a_lapRecording);
         ResetGhosts();
+        m_eliminatorFieldRef.ResetToStartPosition();
     }
 }

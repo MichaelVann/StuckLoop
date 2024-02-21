@@ -7,10 +7,14 @@ using static UnityEngine.GraphicsBuffer;
 public class VehicleHandler : MonoBehaviour
 {
     [SerializeField] HoverPad[] m_hoverPads;
-    GhostManager m_ghostManagerRef;
+    GameManager m_ghostManagerRef;
     const float m_stabilisingVerticalForceStrength = 50f;
 
     [SerializeField] GameObject m_centreOfMassRef;
+
+    //UI
+    [SerializeField] TextMeshProUGUI m_speedReadoutText;
+    [SerializeField] TextMeshProUGUI m_lapReadoutText;
 
     const float m_steeringTorque = 75f;
     Rigidbody m_rigidBodyRef;
@@ -20,13 +24,16 @@ public class VehicleHandler : MonoBehaviour
 
     [SerializeField] float m_torque = 500f;
     [SerializeField] float m_brakingForce = 300f;
-    float m_rollTorqueStrength = 25f;
-    [SerializeField] TextMeshProUGUI m_speedReadoutText;
+    const float m_rollTorqueStrength = 10f;
+    const float m_pitchTorqueStrength = 25f;
     float m_groundContactStrength = 0f;
     Vector3 m_inertiaSteeringForce = Vector3.zero;
 
     float m_jumpCooldown = 0f;
     float m_jumpMaxCooldown = 1f;
+
+    int m_lap = 1;
+    const int m_maxLaps = 30;
 
 
     //Lap Recording
@@ -46,13 +53,16 @@ public class VehicleHandler : MonoBehaviour
         //m_hoverPads = new HoverPad[4] { m_hoverPadFrontLeft, m_hoverPadFrontRight, m_hoverPadBackLeft, m_hoverPadBackRight};
 
         m_rigidBodyRef.centerOfMass = m_centreOfMassRef.transform.localPosition;
-        m_ghostManagerRef = FindObjectOfType<GhostManager>();
+        m_ghostManagerRef = FindObjectOfType<GameManager>();
+        UpdateLapText();
     }
 
     // Update is called once per frame
     void Update()
     {
-        m_speedReadoutText.text = (m_rigidBodyRef.velocity.magnitude * 3.6f).ToString("f2") + " km/h";
+        int intSpeedKmh = (int)(m_rigidBodyRef.velocity.magnitude * VLib._msToKmh);
+        m_speedReadoutText.text = intSpeedKmh.ToString();
+        m_speedReadoutText.color = VLib.RatioToColorRGB(1f-(intSpeedKmh / 500f));
     }
 
     void UpdateGroundContactStrength()
@@ -92,7 +102,7 @@ public class VehicleHandler : MonoBehaviour
 
         if (pitchInput != 0f)
         {
-            m_rigidBodyRef.AddRelativeTorque(m_rollTorqueStrength * m_rigidBodyRef.mass * pitchInput, 0f, 0f);
+            m_rigidBodyRef.AddRelativeTorque(m_pitchTorqueStrength * m_rigidBodyRef.mass * pitchInput, 0f, 0f);
         }
     }
 
@@ -200,11 +210,18 @@ public class VehicleHandler : MonoBehaviour
         m_lapRecording = new List<Ghost.LapPointData>();
     }
 
+    void UpdateLapText()
+    {
+        m_lapReadoutText.text = "Lap (" + m_lap.ToString("d2") + "/" + m_maxLaps + ")";
+    }
+
     void CompleteLap()
     {
         if (m_lapRecording != null)
         {
             m_ghostManagerRef.CompleteLap(m_lapRecording);
+            m_lap++;
+            UpdateLapText();
         }
         StartLapRecording();
     }
@@ -220,6 +237,10 @@ public class VehicleHandler : MonoBehaviour
         {
             m_inSecondHalf = true;
         }
+        else if (a_collider.gameObject.tag == "Eliminator Field")
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void OnCollisionEnter(Collision a_collision)
@@ -228,5 +249,10 @@ public class VehicleHandler : MonoBehaviour
         {
             //Debug.Break();
         }
+    }
+
+    private void OnDestroy()
+    {
+        
     }
 }

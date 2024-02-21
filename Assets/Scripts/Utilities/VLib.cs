@@ -17,6 +17,8 @@ public static class VLib
 
     public const float _degreesToRadians = 3.14159265358979323f / 180f;
 
+    public const float _msToKmh = 3.6f;
+
     public static string FirstLetterToUpperCaseOrConvertNullToEmptyString(this string s)
     {
         if (string.IsNullOrEmpty(s))

@@ -8,6 +8,7 @@ TagManager:
   - Mirror Field
   - Ghost
   - Halfway Field
+  - Eliminator Field
   layers:
   - Default
   - TransparentFX
