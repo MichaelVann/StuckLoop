@@ -20,8 +20,8 @@ public class EliminatorFieldHandler : MonoBehaviour
 
     bool m_rotating;
 
-    float m_movementSpeed = 200f/VLib._msToKmh;
-    float m_cappedMovementSpeed = 400f/ VLib._msToKmh;
+    float m_movementSpeed = 300f/VLib._msToKmh;
+    float m_cappedMovementSpeed = 1000f/ VLib._msToKmh;
     float m_acceleration = 0.2f;
     float m_lerpPercentage = 0f;
     float m_lerpDistance = 0f;

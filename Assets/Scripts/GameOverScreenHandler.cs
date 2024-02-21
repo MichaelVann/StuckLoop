@@ -9,10 +9,12 @@ public class GameOverScreenHandler : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI m_gameOverTitleText;
     [SerializeField] GameManager m_gameManagerRef;
+    [SerializeField] TextMeshProUGUI m_lapText;
     // Start is called before the first frame update
     void Start()
     {
-        
+        m_lapText.text = "Lap (" + m_gameManagerRef.GetLaps().ToString("d2") + "/" + GameManager._maxLaps + ")";
+;
     }
 
     // Update is called once per frame

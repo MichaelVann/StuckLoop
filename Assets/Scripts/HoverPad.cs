@@ -64,7 +64,7 @@ public class HoverPad : MonoBehaviour
             m_dustParticleSystemRef.transform.position = hit.point;
             m_dustParticleSystemRef.transform.rotation = Quaternion.FromToRotation(Vector3.forward, hit.normal);
             ParticleSystem.MainModule alteredParticleMainModule = m_dustParticleSystemRef.main;
-            alteredParticleMainModule.startSize = 1f/ hit.distance;
+            alteredParticleMainModule.startSize = Mathf.Clamp(1f/ hit.distance, 0f, 5f);
             ParticleSystem.ShapeModule shapeModule = m_dustParticleSystemRef.shape;
             shapeModule.radius = Mathf.Tan(m_spotlightHalfAngle * VLib._degreesToRadians) * m_groundDistance;
             if (!m_dustParticleSystemRef.isPlaying)

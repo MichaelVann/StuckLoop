@@ -14,7 +14,6 @@ public class VehicleHandler : MonoBehaviour
 
     //UI
     [SerializeField] TextMeshProUGUI m_speedReadoutText;
-    [SerializeField] TextMeshProUGUI m_lapReadoutText;
 
     const float m_steeringTorque = 75f;
     Rigidbody m_rigidBodyRef;
@@ -31,9 +30,6 @@ public class VehicleHandler : MonoBehaviour
 
     float m_jumpCooldown = 0f;
     float m_jumpMaxCooldown = 1f;
-
-    int m_lap = 1;
-    const int m_maxLaps = 30;
 
 
     //Lap Recording
@@ -54,7 +50,6 @@ public class VehicleHandler : MonoBehaviour
 
         m_rigidBodyRef.centerOfMass = m_centreOfMassRef.transform.localPosition;
         m_gameManagerRef = FindObjectOfType<GameManager>();
-        UpdateLapText();
     }
 
     // Update is called once per frame
@@ -210,18 +205,13 @@ public class VehicleHandler : MonoBehaviour
         m_lapRecording = new List<Ghost.LapPointData>();
     }
 
-    void UpdateLapText()
-    {
-        m_lapReadoutText.text = "Lap (" + m_lap.ToString("d2") + "/" + m_maxLaps + ")";
-    }
+
 
     void CompleteLap()
     {
         if (m_lapRecording != null)
         {
             m_gameManagerRef.CompleteLap(m_lapRecording);
-            m_lap++;
-            UpdateLapText();
         }
         StartLapRecording();
     }
