@@ -45,7 +45,7 @@ public class GameManager : MonoBehaviour
         }
         if (fpsTimer.Update())
         {
-            m_fpsText.text = (1f / Time.fixedDeltaTime).ToString("F0") + " fps";
+            m_fpsText.text = (1f / Time.unscaledDeltaTime).ToString("F0") + " fps";
         }
 
     }
